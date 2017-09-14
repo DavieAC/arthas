@@ -8,7 +8,7 @@ package com.jd.arthas.service.handle;
  * @date 2017年9月14日 下午7:59:59
  *
  */
-public interface TriggerHandle {
+public interface Handle {
 
     /**
      * 

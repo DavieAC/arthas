@@ -2,7 +2,7 @@ package com.jd.arthas.service.timer;
 
 import java.util.concurrent.TimeUnit;
 
-import com.jd.arthas.service.handle.TriggerHandle;
+import com.jd.arthas.service.handle.Handle;
 
 /**
  * 
@@ -24,6 +24,14 @@ public interface Timer {
 
     /**
      * 
+     * @Title: stop
+     * @Description: 定时器结束运行
+     * @throws
+     */
+    public void stop();
+
+    /**
+     * 
      * @Title: setTimer
      * @Description: 给定时器设置触发时间
      * @param time
@@ -39,6 +47,6 @@ public interface Timer {
      * @param handle
      * @throws
      */
-    public void setTriggerHandle(TriggerHandle handle);
+    public void setTriggerHandle(Handle handle);
 
 }
