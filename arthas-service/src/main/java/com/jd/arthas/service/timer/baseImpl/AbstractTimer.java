@@ -10,6 +10,16 @@ import org.slf4j.LoggerFactory;
 import com.jd.arthas.service.handle.Handle;
 import com.jd.arthas.service.timer.Timer;
 
+/**
+ * task:
+ * 1. 不能调用2次start 
+ * 
+ * @ClassName: AbstractTimer
+ * @Description: 
+ * @author dsj
+ * @date 2017年9月15日 上午8:49:31
+ * 
+ */
 public abstract class AbstractTimer implements Timer {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractTimer.class);
@@ -27,6 +37,12 @@ public abstract class AbstractTimer implements Timer {
     @Override
     public void start() {
 
+        // 检查
+        if (time == null || unit == null || taskHandle == null) {
+            logger.error("[{}]未能正确启动:运行参数尚未配置", this.getClass());
+            return;
+        }
+
         TimerExecutor.execute(new Runnable() {
 
             @Override
@@ -42,11 +58,11 @@ public abstract class AbstractTimer implements Timer {
                         try {
                             taskHandle.execute();
                         } catch (Exception e) {
-                            logger.error("定时器:{}执行异常:{}", this.getClass(), e);
+                            logger.error("[{}]执行异常:{}", this.getClass(), e);
                         }
 
                     } catch (InterruptedException e) {
-                        logger.error("定时器:{}睡眠被打断", this.getClass());
+                        logger.error("[{}]睡眠被打断", this.getClass());
                     }
                 }
             }
