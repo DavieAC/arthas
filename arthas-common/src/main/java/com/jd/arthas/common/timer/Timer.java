@@ -1,8 +1,8 @@
-package com.jd.arthas.service.timer;
+package com.jd.arthas.common.timer;
 
 import java.util.concurrent.TimeUnit;
 
-import com.jd.arthas.service.handle.Handle;
+import com.jd.arthas.common.handle.Handle;
 
 /**
  * 

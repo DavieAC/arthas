@@ -1,4 +1,4 @@
-package com.jd.arthas.service.timer.baseImpl;
+package com.jd.arthas.common.timer.baseImpl;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -7,8 +7,9 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.jd.arthas.service.handle.Handle;
-import com.jd.arthas.service.timer.Timer;
+import com.jd.arthas.common.handle.Handle;
+import com.jd.arthas.common.timer.Timer;
+
 
 /**
  * task:

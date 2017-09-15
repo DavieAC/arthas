@@ -9,6 +9,7 @@
         <module>arthas-web</module>
         <module>arthas-service</module>
         <module>arthas-domain</module>
+        <module>arthas-common</module>
     </modules>
 
     <properties>

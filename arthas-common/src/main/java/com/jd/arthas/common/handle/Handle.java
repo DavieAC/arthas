@@ -1,4 +1,4 @@
-package com.jd.arthas.service.handle;
+package com.jd.arthas.common.handle;
 
 /**
  * 
