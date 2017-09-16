@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import com.jd.arthas.common.handle.Handle;
 import com.jd.arthas.common.timer.Timer;
+import com.jd.arthas.common.utils.paraUtils.ParameterUtil;
 
 
 /**
@@ -28,6 +29,9 @@ public abstract class AbstractTimer implements Timer {
     // 每一个定时器都拥有一个单例线程池，用于定时执行任务
     private ExecutorService TimerExecutor = Executors.newSingleThreadExecutor();
 
+    // 定时器运行状态
+    private volatile Boolean isRunning = false;
+
     // 任务句柄
     private Handle taskHandle;
 
@@ -39,7 +43,7 @@ public abstract class AbstractTimer implements Timer {
     public void start() {
 
         // 检查
-        if (time == null || unit == null || taskHandle == null) {
+        if (ParameterUtil.checkNull(taskHandle, time, unit)) {
             logger.error("[{}]未能正确启动:运行参数尚未配置", this.getClass());
             return;
         }
@@ -52,6 +56,9 @@ public abstract class AbstractTimer implements Timer {
                 while (true) {
 
                     try {
+
+                        doBefore();
+
                         // sleep
                         unit.sleep(time);
 
@@ -62,8 +69,11 @@ public abstract class AbstractTimer implements Timer {
                             logger.error("[{}]执行异常:{}", this.getClass(), e);
                         }
 
+                        doAfter();
                     } catch (InterruptedException e) {
-                        logger.error("[{}]睡眠被打断", this.getClass());
+                        logger.error("[{}]被打断,退出定时", this.getClass());
+                    } catch (Exception e) {
+                        logger.error("[{}]异常,{}", this.getClass(), e);
                     }
                 }
             }
@@ -73,7 +83,7 @@ public abstract class AbstractTimer implements Timer {
 
     @Override
     public void stop() {
-        TimerExecutor.shutdown();
+        TimerExecutor.shutdownNow();
     }
 
     @Override
@@ -85,6 +95,16 @@ public abstract class AbstractTimer implements Timer {
     @Override
     public void setTriggerHandle(Handle handle) {
         this.taskHandle = handle;
+    }
+
+    @Override
+    public void doBefore() {
+
+    }
+
+    @Override
+    public void doAfter() {
+
     }
 
 }

@@ -49,4 +49,20 @@ public interface Timer {
      */
     public void setTriggerHandle(Handle handle);
 
+    /**
+     * 
+     * @Title: doBefore
+     * @Description: 开始任务之前
+     * @throws
+     */
+    public void doBefore();
+
+    /**
+     * 
+     * @Title: doAfter
+     * @Description: 开始任务之后
+     * @throws
+     */
+    public void doAfter();
+
 }

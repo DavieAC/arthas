@@ -22,6 +22,18 @@
     <dependencyManagement>
         <dependencies>
 
+            <!-- self -->
+            <dependency>
+                <groupId>com.jd</groupId>
+                <artifactId>arthas-service</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.jd</groupId>
+                <artifactId>arthas-common</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+
             <!-- Spring -->
             <dependency>
                 <groupId>org.springframework</groupId>
