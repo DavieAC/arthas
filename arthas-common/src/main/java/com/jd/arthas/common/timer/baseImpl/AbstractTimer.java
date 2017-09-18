@@ -7,17 +7,14 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.jd.arthas.common.handle.Handle;
+import com.jd.arthas.common.timer.Handle;
 import com.jd.arthas.common.timer.Timer;
 import com.jd.arthas.common.utils.paraUtils.ParameterUtil;
 
-
 /**
- * task:
- * 1. 不能调用2次start 
  * 
  * @ClassName: AbstractTimer
- * @Description: 
+ * @Description: 定时器的基础实现,线程安全无法保证
  * @author dsj
  * @date 2017年9月15日 上午8:49:31
  * 
@@ -48,6 +45,8 @@ public abstract class AbstractTimer implements Timer {
             return;
         }
 
+        isRunning = true;
+
         TimerExecutor.execute(new Runnable() {
 
             @Override
@@ -77,13 +76,14 @@ public abstract class AbstractTimer implements Timer {
                     }
                 }
             }
-
         });
+
     }
 
     @Override
     public void stop() {
         TimerExecutor.shutdownNow();
+        isRunning = false;
     }
 
     @Override
@@ -105,6 +105,10 @@ public abstract class AbstractTimer implements Timer {
     @Override
     public void doAfter() {
 
+    }
+
+    public boolean getIsRunning() {
+        return isRunning;
     }
 
 }

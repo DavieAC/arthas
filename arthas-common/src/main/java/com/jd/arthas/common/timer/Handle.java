@@ -1,4 +1,4 @@
-package com.jd.arthas.common.handle;
+package com.jd.arthas.common.timer;
 
 /**
  * 
@@ -19,3 +19,4 @@ public interface Handle {
     public void execute();
 
 }
+
