@@ -9,15 +9,15 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
-public class DiscardServer {
+public class NettyServer {
     private int port;
 
-    public DiscardServer(int port) {
+    public NettyServer(int port) {
         this.port = port;
     }
 
     public void run() throws Exception {
-        
+
         // Group：群组，Loop：循环，Event：事件，这几个东西联在一起，相比大家也大概明白它的用途了。
         // Netty内部都是通过线程在处理各种数据，EventLoopGroup就是用来管理调度他们的，注册Channel，管理他们的生命周期。
         // NioEventLoopGroup是一个处理I/O操作的多线程事件循环
@@ -39,7 +39,10 @@ public class DiscardServer {
                         public void initChannel(SocketChannel ch) throws Exception {
                             // ChannelPipeline用于存放管理ChannelHandel
                             // ChannelHandler用于处理请求响应的业务逻辑相关代码
-                            ch.pipeline().addLast(new DiscardServerHandler());
+                            
+                            // 设置句柄类型
+                            
+                            ch.pipeline().addLast(new ResponseServerHandler());
                         };
                     })
                     // 对Channel进行一些配置
@@ -58,6 +61,9 @@ public class DiscardServer {
             // sync()会同步等待连接操作结果，用户线程将在此wait()，直到连接操作完成之后，线程被notify(),用户代码继续执行
             // closeFuture()当Channel关闭时返回一个ChannelFuture,用于链路检测
             f.channel().closeFuture().sync();
+            
+            System.out.println("连接关闭");
+            
         } finally {
             // 资源优雅释放
             bossGroup.shutdownGracefully();
@@ -68,7 +74,7 @@ public class DiscardServer {
     public static void main(String[] args) {
         int port = 8088;
         try {
-            new DiscardServer(port).run();
+            new NettyServer(port).run();
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
