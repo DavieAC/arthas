@@ -1,4 +1,4 @@
-package com.jd.arthas.common.test;
+package com.jd.arthas.common.test.server;
 
 import java.nio.charset.Charset;
 
@@ -11,22 +11,7 @@ import io.netty.util.ReferenceCountUtil;
 // ChannelInboundHandler提供了不同的事件处理方法你可以重写
 @SuppressWarnings("deprecation")
 public class DiscardServerHandler extends ChannelInboundHandlerAdapter {
-    /*
-     * @作者:CJY
-     * 
-     * @说明:该方法用于接收从客户端接收的信息
-     * 
-     * @时间:2017-4-2下午12:25:05
-     * 
-     * @see io.netty.channel.ChannelInboundHandlerAdapter#channelRead(io.netty.channel.
-     * ChannelHandlerContext, java.lang.Object)
-     * 
-     * @param ctx
-     * 
-     * @param msg
-     * 
-     * @throws Exception
-     */
+
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         // Discard the received data silently

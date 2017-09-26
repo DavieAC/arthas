@@ -1,4 +1,4 @@
-package com.jd.arthas.common.test;
+package com.jd.arthas.common.test.server;
 
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;

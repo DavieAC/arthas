@@ -13,12 +13,11 @@ import com.jd.arthas.common.constant.Constant;
 public class WebController {
 
     private static final Logger logger = LoggerFactory.getLogger(WebController.class);
-    
+
     @ResponseBody
     @RequestMapping("/mainPage")
     public String mainPage() {
         return Constant.SUCCESS;
     }
-    
-    
+
 }
