@@ -8,4 +8,99 @@
     </parent>
     <artifactId>arthas-web</artifactId>
     <packaging>war</packaging>
+
+    <!-- 打包配置信息 -->
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <log4j.log.level>debug</log4j.log.level>
+            </properties>
+        </profile>
+        <profile>
+            <id>test</id>
+            <properties>
+                <log4j.log.level>info</log4j.log.level>
+            </properties>
+        </profile>
+        <profile>
+            <id>preview</id>
+            <properties>
+                <log4j.log.level>info</log4j.log.level>
+            </properties>
+        </profile>
+        <profile>
+            <id>production</id>
+            <properties>
+                <log4j.log.level>info</log4j.log.level>
+            </properties>
+        </profile>
+    </profiles>
+
+    <dependencies>
+        <!-- self -->
+        <dependency>
+            <groupId>com.jd</groupId>
+            <artifactId>arthas-service</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.jd</groupId>
+            <artifactId>arthas-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.jd</groupId>
+            <artifactId>arthas-domain</artifactId>
+        </dependency>
+
+        <!-- Spring -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+        </dependency>
+
+        <!-- LOG4J日志记录 -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </dependency>
+    </dependencies>
 </project>
