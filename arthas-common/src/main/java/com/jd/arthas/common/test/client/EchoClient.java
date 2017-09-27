@@ -20,8 +20,6 @@ public class EchoClient {
     }
 
     public void start() throws Exception {
-        // EventLoopGroup bossGroup = new NioEventLoopGroup(1);
-        // EventLoopGroup workerGroup = new NioEventLoopGroup();
         EventLoopGroup group = new NioEventLoopGroup();
         try {
             Bootstrap b = new Bootstrap();

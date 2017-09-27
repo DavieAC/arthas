@@ -26,9 +26,7 @@ public class MessageSenderImpl implements MessageSender {
     public void send(final String ip, final int port, final String message) {
 
         try {
-
             Channel channel = new NioSocketChannel();
-
             ChannelFuture future = channel.connect(new InetSocketAddress(ip, port));
 
             future.addListener(new ChannelFutureListener() {
