@@ -10,6 +10,8 @@
         <module>arthas-service</module>
         <module>arthas-domain</module>
         <module>arthas-common</module>
+        <module>arthas-sdk</module>
+        <module>arthas-dao</module>
     </modules>
 
     <properties>
