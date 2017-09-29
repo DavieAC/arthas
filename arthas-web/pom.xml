@@ -17,7 +17,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <log4j.log.level>debug</log4j.log.level>
+                <log4j.log.level>info</log4j.log.level>
             </properties>
         </profile>
         <profile>

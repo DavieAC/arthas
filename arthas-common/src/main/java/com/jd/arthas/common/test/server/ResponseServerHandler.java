@@ -1,5 +1,9 @@
 package com.jd.arthas.common.test.server;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -14,6 +18,8 @@ import io.netty.channel.ChannelHandlerContext;
  */
 public class ResponseServerHandler extends ChannelHandlerAdapter {
 
+    private static final Logger logger = LoggerFactory.getLogger(ResponseServerHandler.class);
+
     /**
      * 这里我们覆盖了chanelRead()事件处理方法。
      * 每当从客户端收到新的数据时，
@@ -26,10 +32,10 @@ public class ResponseServerHandler extends ChannelHandlerAdapter {
      */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-
-        System.out.println("服务端被连接");
+        ByteBuf m = (ByteBuf) msg;
+        logger.info("服务端收到信息:{}", m.toString());
         ctx.write(msg);
-        System.out.println("服务端完成处理");
+        //m.release();
     }
 
     /**
