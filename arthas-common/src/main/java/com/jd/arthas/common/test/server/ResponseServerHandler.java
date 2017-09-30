@@ -1,5 +1,7 @@
 package com.jd.arthas.common.test.server;
 
+import java.nio.charset.Charset;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,10 +34,18 @@ public class ResponseServerHandler extends ChannelHandlerAdapter {
      */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        ByteBuf m = (ByteBuf) msg;
-        logger.info("服务端收到信息:{}", m.toString());
-        ctx.write(msg);
-        //m.release();
+
+        ByteBuf m = null;
+
+        try {
+            m = (ByteBuf) msg;
+            String info = m.toString(Charset.forName("UTF-8"));
+
+            logger.info("服务端收到信息:{}", info);
+            ctx.write(msg);
+        } finally {
+            m.release();
+        }
     }
 
     /**

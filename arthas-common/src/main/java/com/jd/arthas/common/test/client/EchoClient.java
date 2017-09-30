@@ -47,9 +47,9 @@ public class EchoClient {
                 logger.info("开始发送第:{}次请求", i);
                 f = b.connect().sync();
                 logger.info("第:{}次请求接受到了回应", i);
-                // 线程 wait 直到发送完毕
+                // 线程 wait 直到 连接关闭
                 f.channel().closeFuture().sync();
-                logger.info("发送请求结束\n");
+                logger.info("发送请求结束");
             }
 
         } finally {

@@ -1,8 +1,11 @@
 package com.jd.arthas.common.test.client;
 
+import java.nio.charset.Charset;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
@@ -19,8 +22,18 @@ public class EchoClientHandler extends ChannelHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        logger.info("请求发送方读取到了:{}", msg.toString());
-        ctx.close();
+
+
+        ByteBuf m = null;
+        try {
+            m = (ByteBuf) msg;
+            String info = m.toString(Charset.forName("UTF-8"));
+
+            logger.info("请求发送方读取到了:{}", info);
+            ctx.close();
+        } finally {
+            m.release();
+        }
     }
 
     @Override
