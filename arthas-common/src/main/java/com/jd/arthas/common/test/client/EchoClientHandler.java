@@ -17,19 +17,18 @@ public class EchoClientHandler extends ChannelHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
-        ctx.writeAndFlush(Unpooled.copiedBuffer("报文内容", CharsetUtil.UTF_8));
+        ctx.writeAndFlush(Unpooled.copiedBuffer("客户端端建立连接", CharsetUtil.UTF_8));
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-
 
         ByteBuf m = null;
         try {
             m = (ByteBuf) msg;
             String info = m.toString(Charset.forName("UTF-8"));
 
-            logger.info("请求发送方读取到了:{}", info);
+            logger.info("客户端读取到了:{}", info);
             ctx.close();
         } finally {
             m.release();

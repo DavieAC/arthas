@@ -6,7 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.ChannelFuture;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.UnpooledHeapByteBuf;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -40,17 +42,14 @@ public class EchoClient {
                 }
             });
 
-            // connect() TCP / bind() UDP
-            ChannelFuture f = null;
-            for (int i = 1; i <= 10; i++) {
+            // connect() TCP / bind() UDP 建立连接
+            Channel ch = b.connect().sync().channel();
 
-                logger.info("开始发送第:{}次请求", i);
-                f = b.connect().sync();
-                logger.info("第:{}次请求接受到了回应", i);
-                // 线程 wait 直到 连接关闭
-                f.channel().closeFuture().sync();
-                logger.info("发送请求结束");
-            }
+            // 发送报文
+            ch.writeAndFlush("aaa").sync();
+
+            // 线程 wait 直到 连接关闭
+            ch.closeFuture().sync();
 
         } finally {
             group.shutdownGracefully().sync();
