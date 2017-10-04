@@ -12,6 +12,7 @@
         <module>arthas-common</module>
         <module>arthas-sdk</module>
         <module>arthas-dao</module>
+        <module>arthas-rpc</module>
     </modules>
 
     <properties>

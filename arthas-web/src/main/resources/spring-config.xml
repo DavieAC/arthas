@@ -11,7 +11,7 @@
     default-autowire="byName">
 
     <!--让spring扫描包下所有的类，让标注spring注解的类生效 -->
-    <context:component-scan base-package="com.jd.arthas.web.**" />
+    <context:component-scan base-package="com.arthas.web.**" />
     <mvc:annotation-driven />
 
     <!-- 各module的配置文件 -->
