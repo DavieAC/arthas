@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+    <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                value="[%5p] [%d{yyyy-MM-dd HH:mm:ss SSS}] [%t] (%F:%L) %m%n" />
+        </layout>
+    </appender>
+
+    <!-- 日志写入文件 (/export/Logs/) -->
+    <appender name="FILE" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="Encoding" value="UTF-8" />
+        <param name="File" value="/export/Logs/arthas/arthas.log" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                value="[%5p] [%d{yyyy-MM-dd HH:mm:ss SSS}] [%t] (%F:%L) %m%n" />
+        </layout>
+    </appender>
+
+    <!-- 错误日志，单独写入文件 (/export/Logs/) -->
+    <appender name="ERRORFILE" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="Encoding" value="UTF-8" />
+        <param name="Append" value="true" />
+        <param name="File" value="/export/Logs/arthas/error.log" /> <!-- 日志路径，根据实际情况修改 -->
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                value="[%5p] [%d{yyyy-MM-dd HH:mm:ss SSS}] [%t] (%F:%L) %m%n" />
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="LevelMin" value="ERROR" />
+        </filter>
+    </appender>
+
+    <!-- 普通日志，写控制台和文件 -->
+    <logger name="com.jd" additivity="false">
+        <level value="${log4j.log.level}" />
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+        <appender-ref ref="ERRORFILE" />
+    </logger>
+
+    <root>
+        <priority value="${log4j.log.level}" />
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+    </root>
+</log4j:configuration>
