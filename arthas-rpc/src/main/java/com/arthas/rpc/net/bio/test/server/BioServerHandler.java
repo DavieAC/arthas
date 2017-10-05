@@ -1,7 +1,9 @@
 package com.arthas.rpc.net.bio.test.server;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 
@@ -30,10 +32,12 @@ public class BioServerHandler implements Runnable {
         String ip = address.getHostAddress();
         logger.info("接收到链接,ip:{}", ip);
 
-        // 打印出所有的传入参数
+        // 处理传入参数
         BufferedReader reader = null;
+        OutputStreamWriter writer = null;
         try {
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            writer = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
 
             String body = null;
             while ((body = reader.readLine()) != null) {
@@ -42,9 +46,21 @@ public class BioServerHandler implements Runnable {
                     break;
                 }
                 logger.info("本次读取到了:{}", body);
+
+                writer.write(String.format("服务端接受到了传入参数:%s\n", body));
+                writer.flush();
             }
         } catch (Exception e) {
             logger.error("读取链接传输内容出错", e);
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                    writer.close();
+                } catch (IOException e) {
+                    logger.error("链接reader关闭失败", e);
+                }
+            }
         }
 
         logger.info("本次链接完成");
