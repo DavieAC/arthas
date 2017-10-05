@@ -1,4 +1,4 @@
-package com.arthas.common.test.server;
+package com.arthas.rpc.net.netty.test.server;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;

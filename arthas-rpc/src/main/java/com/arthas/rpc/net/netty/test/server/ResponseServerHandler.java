@@ -1,4 +1,4 @@
-package com.arthas.common.test.server;
+package com.arthas.rpc.net.netty.test.server;
 
 import java.nio.charset.Charset;
 

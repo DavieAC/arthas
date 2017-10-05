@@ -1,4 +1,4 @@
-package com.arthas.rpc.net.bio.message.sender;
+package com.arthas.rpc.net.bio.message.client;
 
 /**
  * 
@@ -8,7 +8,7 @@ package com.arthas.rpc.net.bio.message.sender;
  * @date 2017年10月5日 下午10:06:53
  *
  */
-public interface BioMessageSender {
+public interface BioMessageClient {
 
     /**
      * 

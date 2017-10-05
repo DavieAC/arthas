@@ -1,4 +1,4 @@
-package com.arthas.rpc.net.bio.message.sender.impl;
+package com.arthas.rpc.net.bio.message.client.impl;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,12 +12,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.arthas.common.constant.Constant;
-import com.arthas.rpc.net.bio.message.sender.BioMessageSender;
+import com.arthas.rpc.net.bio.message.client.BioMessageClient;
 
-@Service("BioMessageSender")
-public class BioMessageSenderImpl implements BioMessageSender {
+@Service("BioMessageClient")
+public class BioMessageClientImpl implements BioMessageClient {
 
-    private static final Logger logger = LoggerFactory.getLogger(BioMessageSenderImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(BioMessageClientImpl.class);
 
     @Override
     public void sendMessage(String ip, int port, String message) {
