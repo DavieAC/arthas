@@ -56,9 +56,15 @@ public class BioServerHandler implements Runnable {
             if (reader != null) {
                 try {
                     reader.close();
-                    writer.close();
                 } catch (IOException e) {
                     logger.error("链接reader关闭失败", e);
+                }
+            }
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (IOException e) {
+                    logger.error("链接writer关闭失败", e);
                 }
             }
         }
