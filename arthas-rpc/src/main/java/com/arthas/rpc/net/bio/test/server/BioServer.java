@@ -1,4 +1,4 @@
-package com.arthas.rpc.net.nio.test.server;
+package com.arthas.rpc.net.bio.test.server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -11,9 +11,9 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Server {
+public class BioServer {
 
-    private static final Logger logger = LoggerFactory.getLogger(Server.class);
+    private static final Logger logger = LoggerFactory.getLogger(BioServer.class);
 
     private ThreadPoolExecutor executor = null;
 
@@ -34,7 +34,7 @@ public class Server {
             while (true) {
                 socket = server.accept();
                 logger.info("服务端接受到请求,添加链接到线程池进行处理");
-                executor.execute(new ServerHandler(socket));
+                executor.execute(new BioServerHandler(socket));
                 logger.info("线程池正在执行任务的线程数:{},总的线程数:{}", executor.getActiveCount(), executor.getPoolSize());
             }
         } catch (Exception e) {
@@ -53,7 +53,7 @@ public class Server {
     public static void main(String[] args) {
 
         int port = 8088;
-        Server server = new Server();
+        BioServer server = new BioServer();
         server.startLocalBioServer(port);
     }
 

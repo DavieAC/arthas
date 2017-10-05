@@ -1,4 +1,4 @@
-package com.arthas.rpc.net.nio.test.server;
+package com.arthas.rpc.net.bio.test.server;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -8,13 +8,13 @@ import java.net.Socket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ServerHandler implements Runnable {
+public class BioServerHandler implements Runnable {
 
-    private static final Logger logger = LoggerFactory.getLogger(ServerHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(BioServerHandler.class);
 
     private Socket socket;
 
-    public ServerHandler(Socket socket) {
+    public BioServerHandler(Socket socket) {
         this.socket = socket;
     }
 
