@@ -9,6 +9,12 @@
     <artifactId>arthas-rpc</artifactId>
 
     <dependencies>
+        <!-- module 依赖 -->
+        <dependency>
+            <groupId>com.jd</groupId>
+            <artifactId>arthas-common</artifactId>
+        </dependency>
+
         <!-- LOG4J日志记录 -->
         <dependency>
             <groupId>org.slf4j</groupId>

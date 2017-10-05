@@ -10,6 +10,8 @@ import java.net.Socket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.arthas.common.constant.Constant;
+
 public class BioServerHandler implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(BioServerHandler.class);
@@ -36,18 +38,19 @@ public class BioServerHandler implements Runnable {
         BufferedReader reader = null;
         OutputStreamWriter writer = null;
         try {
-            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            writer = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
+            reader = new BufferedReader(new InputStreamReader(socket.getInputStream(), Constant.UTF_8));
+            writer = new OutputStreamWriter(socket.getOutputStream(), Constant.UTF_8);
 
-            String body = null;
-            while ((body = reader.readLine()) != null) {
-                if (body.equals("exit")) {
+            String info;
+            while ((info = reader.readLine()) != null) {
+
+                if (info.equals("exit")) {
                     logger.info("读取到了退出命令");
                     break;
                 }
-                logger.info("本次读取到了:{}", body);
+                logger.info("本次读取到了:{}", info);
 
-                writer.write(String.format("服务端接受到了传入参数:%s\n", body));
+                writer.write(String.format("服务端接受到了传入参数:%s\n", info));
                 writer.flush();
             }
         } catch (Exception e) {
@@ -68,7 +71,6 @@ public class BioServerHandler implements Runnable {
                 }
             }
         }
-
         logger.info("本次链接完成");
     }
 
