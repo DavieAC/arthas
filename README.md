@@ -7,11 +7,11 @@
 1. 项目搭建
 2. 实现一个"线程不安全"的定时器 
 3. 嵌入Spring等技术
-4. 正在实现RPC层网络传输
+4. 实现基于Java bio的RPC层网络传输
 
 目前用到的技术:
 
-* Java Bio
+* Java bio
 * Netty
 * SpringMVC
 * Spring
