@@ -18,7 +18,7 @@ public class Server {
     private ThreadPoolExecutor executor = null;
 
     {
-        BlockingQueue<Runnable> queue = new ArrayBlockingQueue<Runnable>(20);
+        BlockingQueue<Runnable> queue = new ArrayBlockingQueue<Runnable>(10);
         executor = new ThreadPoolExecutor(10, 20, 60, TimeUnit.SECONDS, queue);
     }
 
@@ -33,9 +33,7 @@ public class Server {
             Socket socket = null;
             while (true) {
                 socket = server.accept();
-
-
-                logger.info("接受到请求");
+                logger.info("服务端接受到请求");
                 executor.execute(new ServerHandler(socket));
             }
         } catch (Exception e) {
