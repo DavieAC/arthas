@@ -33,8 +33,9 @@ public class Server {
             Socket socket = null;
             while (true) {
                 socket = server.accept();
-                logger.info("服务端接受到请求");
+                logger.info("服务端接受到请求,添加链接到线程池进行处理");
                 executor.execute(new ServerHandler(socket));
+                logger.info("线程池正在执行任务的线程数:{},总的线程数:{}", executor.getActiveCount(), executor.getPoolSize());
             }
         } catch (Exception e) {
             logger.error("服务端异常", e);
