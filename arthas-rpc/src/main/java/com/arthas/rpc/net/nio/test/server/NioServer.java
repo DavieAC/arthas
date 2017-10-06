@@ -25,15 +25,26 @@ public class NioServer implements Runnable {
 
     private volatile boolean stop;
 
+    /**
+     * 开启本机的端口监听
+     * @param port
+     */
     public NioServer(int port) {
         try {
             selector = Selector.open();
+            /*
+             * ServerSocketChannel 的顶层接口是:SelectableChannel 而SelectableChannel
+             * 可以理解为一个"可复用连接"的抽象.其通过注册一个selector来实现复用.
+             */
             serverChannel = ServerSocketChannel.open();
+            // 非阻塞式
             serverChannel.configureBlocking(false);
+            // 绑定端口和最大连接数
             serverChannel.socket().bind(new InetSocketAddress(port), 1024);
+            // 注册一个selector
             serverChannel.register(selector, SelectionKey.OP_ACCEPT);
         } catch (IOException e) {
-            logger.error("启动本机服务端异常", e);
+            logger.error("启动本机nio服务端异常", e);
             System.exit(1);
         }
     }
@@ -46,16 +57,22 @@ public class NioServer implements Runnable {
     public void run() {
         while (!stop) {
             try {
+                /*
+                 * 该方法阻塞,直到至少一个channel准备好I/O操作(或者超时时间到,或者被打断)
+                 * 这里不设置为0(如果没有I/O操作准备好,或者没被打断会一直阻塞下去)的理由是:需要定时检测stop标志位
+                 */
                 selector.select(1000);
                 Set<SelectionKey> selectedKeys = selector.selectedKeys();
                 Iterator<SelectionKey> it = selectedKeys.iterator();
 
                 while (it.hasNext()) {
                     SelectionKey key = it.next();
+                    // help GC
                     it.remove();
                     try {
                         handleInput(key);
                     } catch (Exception e) {
+                        // 如果接到处理一个socket请求异常时,尝试关闭这个链接
                         if (key != null) {
                             key.cancel();
                             if (key.channel() != null) {
@@ -81,34 +98,52 @@ public class NioServer implements Runnable {
     }
 
     private void handleInput(SelectionKey key) throws IOException {
-        if (key.isValid()) {
-            if (key.isAcceptable()) {
-                ServerSocketChannel ssc = (ServerSocketChannel) key.channel();
-                SocketChannel sc = ssc.accept();
+
+        // 如果key被取消,连接被关闭,或者selector被关闭,这个链接不需要处理
+        if (!key.isValid()) {
+            return;
+        }
+
+        // 检测是否支持建立socket连接
+        if (key.isAcceptable()) {
+            // 还原为服务端的连接
+            ServerSocketChannel ssc = (ServerSocketChannel) key.channel();
+            // 建立连接(相当于TCP 三次握手成功)
+            SocketChannel sc = ssc.accept();
+            // 理论上不应该为null
+            if (sc != null) {
+                // 本链接为非阻塞式
                 sc.configureBlocking(false);
                 sc.register(selector, SelectionKey.OP_READ);
             }
+        }
 
-            if (key.isReadable()) {
-                SocketChannel sc = (SocketChannel) key.channel();
-                ByteBuffer readBuffer = ByteBuffer.allocate(1024);
-                int readBytes = sc.read(readBuffer);
+        // 检查本链接是否已经进入了可读状态(网络数据传输完毕,并且从系统空间移入用户空间)
+        if (key.isReadable()) {
+            
+            SocketChannel sc = (SocketChannel) key.channel();
+            ByteBuffer readBuffer = ByteBuffer.allocate(1024);
+            
+            // 非阻塞式可能出现不完整数据问题,这里获取本次读取的字节数,同时把数据读入到 readBuffer
+            int readBytes = sc.read(readBuffer);
 
-                if (readBytes > 0) {
-                    readBuffer.flip();
-                    byte[] bytes = new byte[readBuffer.remaining()];
-                    readBuffer.get(bytes);
-                    String body = new String(bytes, "UTF-8");
-                    logger.info("服务器接受到指令:{}", body);
+            if (readBytes > 0) {
+                readBuffer.flip();
+                byte[] bytes = new byte[readBuffer.remaining()];
+                // 数据写入到byte型数组中
+                readBuffer.get(bytes);
+                // 转换为String
+                String body = new String(bytes, "UTF-8");
+                logger.info("服务器接受到指令:{}", body);
 
-                    doWrite(sc, "回复");
-                } else if (readBytes < 0) {
-                    // 对端链路关闭
-                    key.cancel();
-                    sc.close();
-                } else {
-                    // 读到0字节 忽略
-                }
+                // 回复
+                doWrite(sc, String.format("服务端已经接受到了指令:%s\n", body));
+            } else if (readBytes < 0) {
+                // 对端链路关闭
+                key.cancel();
+                sc.close();
+            } else {
+                // 读到0字节 忽略
             }
         }
     }
@@ -127,7 +162,9 @@ public class NioServer implements Runnable {
     }
 
     public static void main(String[] args) {
-
+        int port = 8088;
+        NioServer server = new NioServer(port);
+        new Thread(server).start();
     }
 
 }
