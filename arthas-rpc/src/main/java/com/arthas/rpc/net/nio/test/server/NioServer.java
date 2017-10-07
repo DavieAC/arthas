@@ -26,7 +26,7 @@ public class NioServer {
     private ServerSocketChannel serverChannel;
 
     private volatile boolean stop;
-    
+
     private int port;
 
     /**
@@ -36,7 +36,7 @@ public class NioServer {
     public NioServer(int port) {
         this.port = port;
     }
-    
+
     /**
      * 
      * @Title: start
@@ -57,9 +57,10 @@ public class NioServer {
             serverChannel.socket().bind(new InetSocketAddress(port), 1024);
             // 注册一个selector
             serverChannel.register(selector, SelectionKey.OP_ACCEPT);
-            
+
             logger.info(String.format("开启本机:%s端口", port));
             
+            // 同步接受请求
             handleRequest();
         } catch (IOException e) {
             logger.error("启动本机nio服务端异常", e);
@@ -131,16 +132,17 @@ public class NioServer {
             if (sc != null) {
                 // 本链接为非阻塞式
                 sc.configureBlocking(false);
+                // 有半包读的可能性,所以要把这个channel注册到selector中,有传输会被读取到
                 sc.register(selector, SelectionKey.OP_READ);
             }
         }
 
         // 检查本链接是否已经进入了可读状态(网络数据传输完毕,并且从系统空间移入用户空间)
         if (key.isReadable()) {
-            
+
             SocketChannel sc = (SocketChannel) key.channel();
             ByteBuffer readBuffer = ByteBuffer.allocate(1024);
-            
+
             // 非阻塞式可能出现不完整数据问题,这里获取本次读取的字节数,同时把数据读入到 readBuffer
             int readBytes = sc.read(readBuffer);
 
@@ -155,13 +157,13 @@ public class NioServer {
 
                 // 使用终端会导致最后有"\r\n" 所以采取匹配策略
                 if (body.indexOf("exit") != -1) {
-                    
+
                     logger.info("关闭本次链接");
                     doWrite(sc, "关闭本次链接\n");
                     sc.close();
-                    return ;
+                    return;
                 }
-                
+
                 // 回复
                 doWrite(sc, String.format("服务端已经接受到了指令:%s\n", body));
             } else if (readBytes < 0) {
