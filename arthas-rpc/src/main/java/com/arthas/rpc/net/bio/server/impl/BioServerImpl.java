@@ -20,6 +20,10 @@ public class BioServerImpl implements BioServer {
 
     private static final Logger logger = LoggerFactory.getLogger(BioServerImpl.class);
 
+    private int port;
+
+    private volatile boolean stop;
+
     private ThreadPoolExecutor executor = null;
 
     {
@@ -28,21 +32,27 @@ public class BioServerImpl implements BioServer {
     }
 
     @Override
-    public void startListen(int port) throws Exception {
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    @Override
+    public void start() throws Exception {
 
         ServerSocket server = null;
-
+        stop = false;
         try {
             server = new ServerSocket(port);
             logger.info("本机启动服务端,监听端口:{}", port);
 
             Socket socket = null;
-            while (true) {
+            while (!stop) {
                 socket = server.accept();
                 logger.info("服务端接受到请求,添加链接到线程池进行处理");
                 executor.execute(new BioServerHandler(socket));
                 logger.info("线程池正在执行任务的线程数:{},总的线程数:{}", executor.getActiveCount(), executor.getPoolSize());
             }
+
         } catch (Exception e) {
             logger.error("服务端异常", e);
         } finally {
@@ -54,6 +64,11 @@ public class BioServerImpl implements BioServer {
                 }
             }
         }
+    }
+
+    @Override
+    public void close() {
+        stop = true;
     }
 
 }

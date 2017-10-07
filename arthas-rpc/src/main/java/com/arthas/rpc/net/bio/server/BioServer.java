@@ -1,7 +1,16 @@
 package com.arthas.rpc.net.bio.server;
 
 public interface BioServer {
-    
+
+    /**
+     * 
+     * @Title: setPort
+     * @Description: 设置本机监听端口
+     * @param port
+     * @throws
+     */
+    public void setPort(int port);
+
     /**
      * 
      * @Title: startServer
@@ -9,6 +18,14 @@ public interface BioServer {
      * @param port
      * @throws
      */
-    public void startListen(int port) throws Exception;
+    public void start() throws Exception;
+
+    /**
+     * 
+     * @Title: close
+     * @Description: 关闭服务
+     * @throws
+     */
+    public void close();
 
 }
