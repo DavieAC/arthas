@@ -20,7 +20,7 @@ import com.arthas.common.constant.Constant;
  * @date 2014年2月16日
  * @version 1.0
  */
-public class NioClient implements Runnable {
+public class NioClient {
 
     private Logger logger = LoggerFactory.getLogger(NioClient.class);
 
@@ -47,8 +47,13 @@ public class NioClient implements Runnable {
         }
     }
 
-    @Override
-    public void run() {
+    /**
+     * 
+     * @Title: connect
+     * @Description: 进行连接,首先进行第一次,然后通过selector处理半包写入,或者对回应进行处理
+     * @throws
+     */
+    public void connect() {
         try {
             doConnect();
         } catch (IOException e) {
@@ -80,12 +85,23 @@ public class NioClient implements Runnable {
         }
 
         // 多路复用器关闭后，所有注册在上面的Channel和Pipe等资源都会被自动去注册并关闭，所以不需要重复释放资源
-        if (selector != null) try {
-            selector.close();
-        } catch (IOException e) {
-            logger.error("客户端关闭异常", e);
+        if (selector != null) {
+            try {
+                selector.close();
+            } catch (IOException e) {
+                logger.error("客户端关闭异常", e);
+            }
         }
+    }
 
+    /**
+     * 
+     * @Title: disconnect
+     * @Description: 断开连接 原子操作
+     * @throws
+     */
+    public void disconnect() {
+        stop = true;
     }
 
     private void handleInput(SelectionKey key) throws IOException {
@@ -102,7 +118,7 @@ public class NioClient implements Runnable {
                     System.exit(1);// 连接失败，进程退出
                 }
             }
-            
+
             // 如果接到了回应
             if (key.isReadable()) {
                 ByteBuffer readBuffer = ByteBuffer.allocate(1024);
@@ -130,7 +146,7 @@ public class NioClient implements Runnable {
         // 如果直接连接成功，则注册到多路复用器上，发送请求消息，读应答
         if (socketChannel.connect(new InetSocketAddress(host, port))) {
             socketChannel.register(selector, SelectionKey.OP_READ);
-            doWrite(socketChannel, "第一次连接");
+            doWrite(socketChannel, "连接成功");
         } else {
             socketChannel.register(selector, SelectionKey.OP_CONNECT);
         }
@@ -158,6 +174,12 @@ public class NioClient implements Runnable {
         if (!writeBuffer.hasRemaining()) {
             logger.info("客户端发送成功");
         }
+    }
+
+    public static void main(String[] args) {
+        NioClient client = new NioClient("127.0.0.1", 8088);
+        client.connect();
+        client.disconnect();
     }
 
 }
