@@ -7,7 +7,7 @@
 1. 项目搭建
 2. 实现一个"线程不安全"的定时器 
 3. 嵌入Spring等技术
-4. 实现基于Java bio的RPC层
+4. 实现基于Java bio的RPC层(只实现了基本功能,还有很多地方不完善)
 5. 正在实现基于Java nio的PRC层
 
 目前用到的技术:
@@ -16,3 +16,4 @@
 * Netty
 * SpringMVC
 * Spring
+* Java nio
