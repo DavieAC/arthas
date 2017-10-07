@@ -13,9 +13,11 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.arthas.common.constant.Constant;
 
 
-public class NioServer implements Runnable {
+
+public class NioServer {
 
     private static final Logger logger = LoggerFactory.getLogger(NioServer.class);
 
@@ -24,12 +26,24 @@ public class NioServer implements Runnable {
     private ServerSocketChannel serverChannel;
 
     private volatile boolean stop;
+    
+    private int port;
 
     /**
-     * 开启本机的端口监听
+     * 设置本机端口号
      * @param port
      */
     public NioServer(int port) {
+        this.port = port;
+    }
+    
+    /**
+     * 
+     * @Title: start
+     * @Description: 开启本机端口监听
+     * @throws
+     */
+    public void start() {
         try {
             selector = Selector.open();
             /*
@@ -43,6 +57,10 @@ public class NioServer implements Runnable {
             serverChannel.socket().bind(new InetSocketAddress(port), 1024);
             // 注册一个selector
             serverChannel.register(selector, SelectionKey.OP_ACCEPT);
+            
+            logger.info(String.format("开启本机:%s端口", port));
+            
+            handleRequest();
         } catch (IOException e) {
             logger.error("启动本机nio服务端异常", e);
             System.exit(1);
@@ -53,8 +71,7 @@ public class NioServer implements Runnable {
         this.stop = true;
     }
 
-    @Override
-    public void run() {
+    public void handleRequest() {
         while (!stop) {
             try {
                 /*
@@ -133,9 +150,18 @@ public class NioServer implements Runnable {
                 // 数据写入到byte型数组中
                 readBuffer.get(bytes);
                 // 转换为String
-                String body = new String(bytes, "UTF-8");
+                String body = new String(bytes, Constant.UTF_8);
                 logger.info("服务器接受到指令:{}", body);
 
+                // 使用终端会导致最后有"\r\n" 所以采取匹配策略
+                if (body.indexOf("exit") != -1) {
+                    
+                    logger.info("关闭本次链接");
+                    doWrite(sc, "关闭本次链接\n");
+                    sc.close();
+                    return ;
+                }
+                
                 // 回复
                 doWrite(sc, String.format("服务端已经接受到了指令:%s\n", body));
             } else if (readBytes < 0) {
@@ -154,17 +180,19 @@ public class NioServer implements Runnable {
             return;
         }
 
-        byte[] bytes = response.getBytes();
-        ByteBuffer writeBuffer = ByteBuffer.allocate(bytes.length);
-        writeBuffer.put(bytes);
-        writeBuffer.flip();
-        channel.write(writeBuffer);
+        // 把回应按照UTF-8的形式拆解为字节
+        byte[] bytes = response.getBytes(Constant.UTF_8);
+        ByteBuffer buffer = ByteBuffer.allocate(bytes.length);
+        buffer.put(bytes);
+        // 设置读写指针
+        buffer.flip();
+        channel.write(buffer);
     }
 
     public static void main(String[] args) {
         int port = 8088;
         NioServer server = new NioServer(port);
-        new Thread(server).start();
+        server.start();
     }
 
 }
