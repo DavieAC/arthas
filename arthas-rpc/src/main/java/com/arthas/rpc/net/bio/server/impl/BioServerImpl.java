@@ -1,4 +1,4 @@
-package com.arthas.rpc.net.bio.message.server.impl;
+package com.arthas.rpc.net.bio.server.impl;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -12,13 +12,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.arthas.rpc.net.bio.message.server.BioMessageServer;
+import com.arthas.rpc.net.bio.server.BioServer;
 import com.arthas.rpc.net.bio.test.server.BioServerHandler;
 
 @Service("BioMessageServer")
-public class BioMessageServerImpl implements BioMessageServer {
+public class BioServerImpl implements BioServer {
 
-    private static final Logger logger = LoggerFactory.getLogger(BioMessageServerImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(BioServerImpl.class);
 
     private ThreadPoolExecutor executor = null;
 

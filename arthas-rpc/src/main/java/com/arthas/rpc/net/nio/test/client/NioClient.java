@@ -15,11 +15,6 @@ import org.slf4j.LoggerFactory;
 
 import com.arthas.common.constant.Constant;
 
-/**
- * @author Administrator
- * @date 2014年2月16日
- * @version 1.0
- */
 public class NioClient {
 
     private Logger logger = LoggerFactory.getLogger(NioClient.class);
@@ -179,6 +174,8 @@ public class NioClient {
     public static void main(String[] args) {
         NioClient client = new NioClient("127.0.0.1", 8088);
         client.connect();
+
+        // 这里只是断开了本地selector,没有断开连接本身
         client.disconnect();
     }
 

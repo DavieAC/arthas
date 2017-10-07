@@ -1,6 +1,6 @@
-package com.arthas.rpc.net.bio.message.server;
+package com.arthas.rpc.net.bio.server;
 
-public interface BioMessageServer {
+public interface BioServer {
     
     /**
      * 
