@@ -15,7 +15,12 @@ import org.springframework.stereotype.Service;
 import com.arthas.rpc.net.bio.server.BioServer;
 import com.arthas.rpc.net.bio.test.server.BioServerHandler;
 
-@Service("BioMessageServer")
+/*
+ * 暂时只设计为启停一次,不能重复使用 BioServer server = new BioServerImpl(); server.setPort(8088); server.start();
+ * // 目前是阻塞的,待优化 server.stop();
+ * 
+ */
+@Service("BioServer")
 public class BioServerImpl implements BioServer {
 
     private static final Logger logger = LoggerFactory.getLogger(BioServerImpl.class);
@@ -24,11 +29,11 @@ public class BioServerImpl implements BioServer {
 
     private volatile boolean stop;
 
-    private ThreadPoolExecutor executor = null;
+    private ThreadPoolExecutor taskExecutor = null;
 
     {
         BlockingQueue<Runnable> queue = new ArrayBlockingQueue<Runnable>(10);
-        executor = new ThreadPoolExecutor(10, 20, 60, TimeUnit.SECONDS, queue);
+        taskExecutor = new ThreadPoolExecutor(10, 20, 60, TimeUnit.SECONDS, queue);
     }
 
     @Override
@@ -49,13 +54,20 @@ public class BioServerImpl implements BioServer {
             while (!stop) {
                 socket = server.accept();
                 logger.info("服务端接受到请求,添加链接到线程池进行处理");
-                executor.execute(new BioServerHandler(socket));
-                logger.info("线程池正在执行任务的线程数:{},总的线程数:{}", executor.getActiveCount(), executor.getPoolSize());
+                taskExecutor.execute(new BioServerHandler(socket));
+                logger.info("线程池正在执行任务的线程数:{},总的线程数:{}", taskExecutor.getActiveCount(), taskExecutor.getPoolSize());
             }
 
         } catch (Exception e) {
             logger.error("服务端异常", e);
         } finally {
+
+            taskExecutor.shutdownNow();
+
+            if (!taskExecutor.awaitTermination(1, TimeUnit.MINUTES)) {
+                logger.error("一分钟内,线程池内线程都没有完全结束,可能有线程");
+            }
+
             if (server != null) {
                 try {
                     server.close();
@@ -70,5 +82,40 @@ public class BioServerImpl implements BioServer {
     public void close() {
         stop = true;
     }
+
+    private class circle implements Runnable {
+
+        private ServerSocket server;
+
+        @Override
+        public void run() {
+            try {
+                Socket socket = null;
+                while (!stop) {
+                    try {
+                        socket = server.accept();
+                    } catch (IOException e) {
+                        logger.error("建立连接失败", e);
+                    }
+                    logger.info("服务端接受到请求,添加链接到线程池进行处理");
+                    taskExecutor.execute(new BioServerHandler(socket));
+                    logger.info("线程池正在执行任务的线程数:{},总的线程数:{}", taskExecutor.getActiveCount(), taskExecutor.getPoolSize());
+                }
+            } catch (Exception e) {
+                // catch 住所有异常
+                logger.error("bio 循环线程异常", e);
+            }
+        }
+
+        public ServerSocket getServer() {
+            return server;
+        }
+
+        public void setServer(ServerSocket server) {
+            this.server = server;
+        }
+
+    }
+
 
 }

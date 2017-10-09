@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import com.arthas.common.constant.Constant;
 import com.arthas.rpc.net.bio.client.BioClient;
 
-@Service("BioMessageClient")
+@Service("BioClient")
 public class BioClientImpl implements BioClient {
 
     private static final Logger logger = LoggerFactory.getLogger(BioClientImpl.class);
