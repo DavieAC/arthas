@@ -16,7 +16,10 @@ import com.arthas.rpc.net.bio.server.BioServer;
 import com.arthas.rpc.net.bio.test.server.BioServerHandler;
 
 /*
- * 暂时只设计为启停一次,不能重复使用 BioServer server = new BioServerImpl(); server.setPort(8088); server.start();
+ * 暂时只设计为启停一次,不能重复使用 
+ * BioServer server = new BioServerImpl(); 
+ * server.setPort(8088); 
+ * server.start();
  * // 目前是阻塞的,待优化 server.stop();
  * 
  */
