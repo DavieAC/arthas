@@ -35,8 +35,13 @@ public class TimerImpl implements Timer {
     @Override
     public void start() throws Exception {
 
+        // 给参数生成本地固定拷贝,以确保在运行过程中,不会给参数的改变干扰
+        Handler curTask = taskHandler.getClass().newInstance();
+        Long curTime = new Long(time);
+        TimeUnit curUnit = unit.getClass().newInstance();
+
         // 检查
-        if (ParameterUtil.checkNull(taskHandler, time, unit)) {
+        if (ParameterUtil.checkNull(curTask, curTime, curUnit)) {
             throw new Exception("定时器参数配置错误");
         }
 
@@ -44,6 +49,11 @@ public class TimerImpl implements Timer {
             synchronized (running) {
                 if (!running) {
                     timerThread = new TimerThread();
+
+                    timerThread.setTaskHandler(curTask);
+                    timerThread.setTime(curTime);
+                    timerThread.setUnit(curUnit);
+
                     timerThread.start();
                     running = true;
                 }
@@ -75,6 +85,12 @@ public class TimerImpl implements Timer {
 
         private volatile boolean stop = false;
 
+        private Handler taskHandler;
+
+        private Long time;
+
+        private TimeUnit unit;
+
         @Override
         public void run() {
 
@@ -97,13 +113,35 @@ public class TimerImpl implements Timer {
                     logger.error("handler执行异常:{}", this.getClass(), e);
                 }
             }
-
         }
 
         public void cancel() {
             stop = true;
         }
 
+        public Handler getTaskHandler() {
+            return taskHandler;
+        }
+
+        public void setTaskHandler(Handler taskHandler) {
+            this.taskHandler = taskHandler;
+        }
+
+        public Long getTime() {
+            return time;
+        }
+
+        public void setTime(Long time) {
+            this.time = time;
+        }
+
+        public TimeUnit getUnit() {
+            return unit;
+        }
+
+        public void setUnit(TimeUnit unit) {
+            this.unit = unit;
+        }
     }
 
     @Override
@@ -113,8 +151,8 @@ public class TimerImpl implements Timer {
     }
 
     @Override
-    public void setTriggerHandle(Handler handle) {
-        this.taskHandler = handle;
+    public void setHandler(Handler handler) {
+        this.taskHandler = handler;
     }
 
 }

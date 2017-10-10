@@ -46,6 +46,6 @@ public interface Timer {
      * @param handle
      * @throws
      */
-    public void setTriggerHandle(Handler handle);
+    public void setHandler(Handler handler);
 
 }
