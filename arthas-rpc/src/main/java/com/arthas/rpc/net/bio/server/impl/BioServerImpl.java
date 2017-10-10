@@ -132,7 +132,7 @@ public class BioServerImpl implements BioServer {
         /**
          * 
          * @Title: keepShowPoolState
-         * @Description: 调用这个方法之后,开始定时打印线程池信息
+         * @Description: 调用这个方法之后,开始定时打印线程池信息(尚未实现)
          * @throws
          */
         private void keepShowPoolState() {
