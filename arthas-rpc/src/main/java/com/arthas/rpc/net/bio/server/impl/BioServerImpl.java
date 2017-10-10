@@ -22,9 +22,11 @@ public class BioServerImpl implements BioServer {
 
     private static final Logger logger = LoggerFactory.getLogger(BioServerImpl.class);
 
-    private CircleTask task = new CircleTask();
+    private CircleTask task;
 
-    private int port;
+    private Integer port;
+
+    private volatile Boolean running = false;
 
     @Override
     public void setPort(int port) {
@@ -33,18 +35,36 @@ public class BioServerImpl implements BioServer {
 
     @Override
     public void start() throws Exception {
-        Thread thread = new Thread(task);
-        thread.start();
+
+        if (port == null) {
+            throw new Exception("端口未设置,不能启动服务器");
+        }
+
+        if (running == true) {
+            throw new Exception("不能重复启动同一个服务器");
+        }
+
+        synchronized (running) {
+            if (running == false) {
+                task = new CircleTask();
+                Thread thread = new Thread(task);
+                thread.start();
+                logger.info("本机启动服务端,监听端口:{}", port);
+                running = true;
+            }
+        }
     }
 
     @Override
     public void close() {
-        task.stop();
+        if (task != null) {
+            task.stop();
+        }
     }
 
     private class CircleTask implements Runnable {
 
-        private volatile boolean stop;
+        private volatile boolean stop = false;
 
         private List<TerminalTask> taskList = new ArrayList<TerminalTask>();
 
@@ -58,11 +78,9 @@ public class BioServerImpl implements BioServer {
         @Override
         public void run() {
 
-            stop = false;
             ServerSocket server = null;
             try {
                 server = new ServerSocket(port);
-                logger.info("本机启动服务端,监听端口:{}", port);
 
                 Socket socket = null;
                 while (!stop) {
