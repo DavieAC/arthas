@@ -8,7 +8,7 @@ package com.arthas.common.timer;
  * @date 2017年9月14日 下午7:59:59
  *
  */
-public interface Handle {
+public interface Handler {
 
     /**
      * 

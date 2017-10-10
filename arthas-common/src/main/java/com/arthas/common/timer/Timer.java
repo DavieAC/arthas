@@ -19,7 +19,7 @@ public interface Timer {
      * @Description: 定时器开始运行 
      * @throws
      */
-    public void start();
+    public void start() throws Exception;
 
     /**
      * 
@@ -27,7 +27,7 @@ public interface Timer {
      * @Description: 定时器结束运行
      * @throws
      */
-    public void stop();
+    public void stop() throws Exception;
 
     /**
      * 
@@ -46,22 +46,6 @@ public interface Timer {
      * @param handle
      * @throws
      */
-    public void setTriggerHandle(Handle handle);
-
-    /**
-     * 
-     * @Title: doBefore
-     * @Description: 开始任务之前
-     * @throws
-     */
-    public void doBefore();
-
-    /**
-     * 
-     * @Title: doAfter
-     * @Description: 开始任务之后
-     * @throws
-     */
-    public void doAfter();
+    public void setTriggerHandle(Handler handle);
 
 }
