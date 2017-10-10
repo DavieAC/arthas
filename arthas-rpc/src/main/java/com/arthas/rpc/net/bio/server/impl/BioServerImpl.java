@@ -3,6 +3,7 @@ package com.arthas.rpc.net.bio.server.impl;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -66,6 +67,8 @@ public class BioServerImpl implements BioServer {
 
         private volatile boolean stop = false;
 
+        private ServerSocket server = null;
+
         private List<TerminalTask> taskList = new ArrayList<TerminalTask>();
 
         private ThreadPoolExecutor taskExecutor = null;
@@ -78,7 +81,6 @@ public class BioServerImpl implements BioServer {
         @Override
         public void run() {
 
-            ServerSocket server = null;
             try {
                 server = new ServerSocket(port);
 
@@ -95,8 +97,11 @@ public class BioServerImpl implements BioServer {
                     taskList.add(curTask);
                     taskExecutor.execute(new BioServerHandler(socket));
                 }
+            } catch (SocketException e) {
+                logger.error("bio 服务端关闭", e);
             } catch (Exception e) {
-                logger.error("bio 循环线程异常", e);
+                logger.error("bio 循环线程捕获异常", e);
+                return;
             } finally {
 
                 // 关闭这个服务本身
@@ -117,7 +122,7 @@ public class BioServerImpl implements BioServer {
                 // 等待线程池内线程全部结束
                 try {
                     if (!taskExecutor.awaitTermination(1, TimeUnit.MINUTES)) {
-                        logger.error("一分钟内,线程池内线程都没有完全结束,可能有线程");
+                        logger.info("一分钟内,线程池内线程都没有完全结束");
                     }
                 } catch (InterruptedException e) {
                     logger.error("线程池等待被打断", e);
@@ -127,6 +132,12 @@ public class BioServerImpl implements BioServer {
 
         public void stop() {
             this.stop = true;
+            try {
+                server.close();
+                server = null;
+            } catch (IOException e) {
+                logger.error("bio 服务关闭失败", e);
+            }
         }
 
         /**
