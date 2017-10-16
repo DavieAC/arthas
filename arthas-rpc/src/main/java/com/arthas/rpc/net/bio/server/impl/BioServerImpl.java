@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.arthas.common.thread.TerminalTask;
+import com.arthas.common.thread.TerminalThread;
 import com.arthas.common.utils.threadUtils.TerminalTaskUtil;
 import com.arthas.rpc.net.bio.server.BioServer;
 import com.arthas.rpc.net.bio.server.handler.BioServerHandler;
@@ -48,8 +49,7 @@ public class BioServerImpl implements BioServer {
         synchronized (running) {
             if (running == false) {
                 task = new CircleTask();
-                Thread thread = new Thread(task);
-                thread.start();
+                task.start();
                 logger.info("本机启动服务端,监听端口:{}", port);
                 running = true;
             }
@@ -57,13 +57,14 @@ public class BioServerImpl implements BioServer {
     }
 
     @Override
-    public void close() {
+    public void stop() {
         if (task != null) {
-            task.stop();
+            task.shutdown();
+            task.interrupt();
         }
     }
 
-    private class CircleTask implements Runnable {
+    private class CircleTask extends TerminalThread {
 
         private volatile boolean stop = false;
 
@@ -130,7 +131,7 @@ public class BioServerImpl implements BioServer {
             }
         }
 
-        public void stop() {
+        public void shutdown() {
             this.stop = true;
             try {
                 server.close();

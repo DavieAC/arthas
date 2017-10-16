@@ -26,6 +26,6 @@ public interface BioServer {
      * @Description: 关闭服务
      * @throws
      */
-    public void close();
+    public void stop();
 
 }
