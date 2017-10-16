@@ -11,9 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.arthas.common.constant.Constant;
-import com.arthas.common.thread.TerminalTask;
+import com.arthas.common.thread.AbstractTerminalThread;
 
-public class BioServerHandler implements TerminalTask, Runnable {
+public class BioServerHandler extends AbstractTerminalThread implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(BioServerHandler.class);
 
@@ -47,7 +47,7 @@ public class BioServerHandler implements TerminalTask, Runnable {
             String info;
             while (stop == false && (info = reader.readLine()) != null) {
 
-                if (info.equals("exit")) {
+                if ("exit".equals(info)) {
                     logger.info("读取到了退出命令");
                     break;
                 }
@@ -78,7 +78,7 @@ public class BioServerHandler implements TerminalTask, Runnable {
     }
 
     @Override
-    public void stop() {
+    public void shutdown() {
         stop = true;
     }
 

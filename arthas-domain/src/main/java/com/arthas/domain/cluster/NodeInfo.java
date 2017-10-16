@@ -13,6 +13,6 @@ public class NodeInfo {
     /**
      * Master节点的身份标识
      */
-    public String Master;
+    public String master;
 
 }

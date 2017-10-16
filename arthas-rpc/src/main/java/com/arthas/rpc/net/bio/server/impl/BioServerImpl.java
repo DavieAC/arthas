@@ -14,9 +14,8 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.arthas.common.thread.TerminalTask;
-import com.arthas.common.thread.TerminalThread;
-import com.arthas.common.utils.threadUtils.TerminalTaskUtil;
+import com.arthas.common.thread.AbstractTerminalThread;
+import com.arthas.common.utils.threadUtils.ThreadUtil;
 import com.arthas.rpc.net.bio.server.BioServer;
 import com.arthas.rpc.net.bio.server.handler.BioServerHandler;
 
@@ -64,13 +63,13 @@ public class BioServerImpl implements BioServer {
         }
     }
 
-    private class CircleTask extends TerminalThread {
+    private class CircleTask extends AbstractTerminalThread {
 
         private volatile boolean stop = false;
 
         private ServerSocket server = null;
 
-        private List<TerminalTask> taskList = new ArrayList<TerminalTask>();
+        private List<AbstractTerminalThread> taskList = new ArrayList<AbstractTerminalThread>();
 
         private ThreadPoolExecutor taskExecutor = null;
 
@@ -94,7 +93,7 @@ public class BioServerImpl implements BioServer {
                         continue;
                     }
 
-                    TerminalTask curTask = new BioServerHandler(socket);
+                    AbstractTerminalThread curTask = new BioServerHandler(socket);
                     taskList.add(curTask);
                     taskExecutor.execute(new BioServerHandler(socket));
                 }
@@ -102,43 +101,29 @@ public class BioServerImpl implements BioServer {
                 logger.error("bio 服务端关闭", e);
             } catch (Exception e) {
                 logger.error("bio 循环线程捕获异常", e);
-                return;
             } finally {
 
                 // 关闭这个服务本身
                 if (server != null) {
                     try {
                         server.close();
+                        server = null;
                     } catch (IOException e) {
                         logger.error("服务端关闭异常", e);
                     }
                 }
 
                 // 尝试终止所有在跑的处理任务
-                TerminalTaskUtil.terminalAll(taskList);
+                ThreadUtil.terminalAllThread(taskList);
+                taskList.clear();
 
                 // 尝试终止所有的线程
                 taskExecutor.shutdownNow();
-
-                // 等待线程池内线程全部结束
-                try {
-                    if (!taskExecutor.awaitTermination(1, TimeUnit.MINUTES)) {
-                        logger.info("一分钟内,线程池内线程都没有完全结束");
-                    }
-                } catch (InterruptedException e) {
-                    logger.error("线程池等待被打断", e);
-                }
             }
         }
 
         public void shutdown() {
             this.stop = true;
-            try {
-                server.close();
-                server = null;
-            } catch (IOException e) {
-                logger.error("bio 服务关闭失败", e);
-            }
         }
 
         /**

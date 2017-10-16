@@ -69,7 +69,9 @@ public class NioClient {
                     } catch (Exception e) {
                         if (key != null) {
                             key.cancel();
-                            if (key.channel() != null) key.channel().close();
+                            if (key.channel() != null) {
+                                key.channel().close();
+                            }
                         }
                     }
                 }
