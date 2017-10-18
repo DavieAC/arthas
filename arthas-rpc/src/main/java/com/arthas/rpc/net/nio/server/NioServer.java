@@ -4,13 +4,12 @@ public interface NioServer {
 
     /**
      * 
-     * @Title: startListen
+     * @Title: start
      * @Description: 开始监听本地端口
-     * @param port
      * @throws
      */
-    public void startListen(int port);
-    
+    public void start();
+
     /**
      * 
      * @Title: close

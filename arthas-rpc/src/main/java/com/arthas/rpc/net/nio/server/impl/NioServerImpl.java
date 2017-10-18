@@ -1,4 +1,4 @@
-package com.arthas.rpc.net.nio.test.server;
+package com.arthas.rpc.net.nio.server.impl;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -14,24 +14,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.arthas.common.constant.Constant;
+import com.arthas.rpc.net.nio.server.NioServer;
 
-public class NioServer {
+public class NioServerImpl implements NioServer {
 
-    private static final Logger logger = LoggerFactory.getLogger(NioServer.class);
+    private static final Logger logger = LoggerFactory.getLogger(NioServerImpl.class);
+
+    private final int port;
+
+    private volatile boolean stop;
 
     private Selector selector;
 
     private ServerSocketChannel serverChannel;
 
-    private volatile boolean stop;
-
-    private int port;
-
     /**
      * 设置本机端口号
      * @param port
      */
-    public NioServer(int port) {
+    public NioServerImpl(int port) {
         this.port = port;
     }
 
@@ -41,6 +42,7 @@ public class NioServer {
      * @Description: 开启本机端口监听
      * @throws
      */
+    @Override
     public void start() {
         try {
             selector = Selector.open();
@@ -66,11 +68,12 @@ public class NioServer {
         }
     }
 
-    public void stop() {
+    @Override
+    public void close() {
         this.stop = true;
     }
 
-    public void handleRequest() {
+    private void handleRequest() {
         while (!stop) {
             try {
                 /*
@@ -188,11 +191,4 @@ public class NioServer {
         buffer.flip();
         channel.write(buffer);
     }
-
-    public static void main(String[] args) {
-        int port = 8088;
-        NioServer server = new NioServer(port);
-        server.start();
-    }
-
 }
