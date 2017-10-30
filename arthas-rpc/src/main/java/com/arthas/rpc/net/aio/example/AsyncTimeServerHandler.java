@@ -18,11 +18,6 @@ import java.net.InetSocketAddress;
 import java.nio.channels.AsynchronousServerSocketChannel;
 import java.util.concurrent.CountDownLatch;
 
-/**
- * @author Administrator
- * @date 2014年2月16日
- * @version 1.0
- */
 public class AsyncTimeServerHandler implements Runnable {
 
     private int port;
