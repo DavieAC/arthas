@@ -1,4 +1,4 @@
-package com.arthas.rpc.net.nio.test.client;
+package com.arthas.rpc.net.nio.example.client;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

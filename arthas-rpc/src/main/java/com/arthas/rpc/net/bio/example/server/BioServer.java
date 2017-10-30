@@ -1,4 +1,4 @@
-package com.arthas.rpc.net.bio.test.server;
+package com.arthas.rpc.net.bio.example.server;
 
 import java.io.IOException;
 import java.net.ServerSocket;

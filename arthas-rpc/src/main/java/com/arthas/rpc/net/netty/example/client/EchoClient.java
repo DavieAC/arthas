@@ -1,4 +1,4 @@
-package com.arthas.rpc.net.netty.test.client;
+package com.arthas.rpc.net.netty.example.client;
 
 import java.net.InetSocketAddress;
 

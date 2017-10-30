@@ -11,19 +11,18 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.arthas.rpc.net.aio;
+package com.arthas.rpc.net.aio.example;
+
+import java.io.IOException;
 
 /**
  * @author lilinfeng
  * @date 2014年2月14日
  * @version 1.0
  */
-public class TimeClient {
+public class TimeServer {
 
-    /**
-     * @param args
-     */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         int port = 8080;
         if (args != null && args.length > 0) {
             try {
@@ -31,9 +30,8 @@ public class TimeClient {
             } catch (NumberFormatException e) {
                 // 采用默认值
             }
-
         }
-        new Thread(new AsyncTimeClientHandler("127.0.0.1", port), "AIO-AsyncTimeClientHandler-001").start();
-
+        AsyncTimeServerHandler timeServer = new AsyncTimeServerHandler(port);
+        new Thread(timeServer, "AIO-AsyncTimeServerHandler-001").start();
     }
 }
